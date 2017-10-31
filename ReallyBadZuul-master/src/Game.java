@@ -44,11 +44,12 @@ public class Game
         office = new Room("in the computing admin office");
         
         // initialise room exits
-        outside.setExits(null, theater, lab, pub);
-        theater.setExits(null, null, null, outside);
-        pub.setExits(null, outside, null, null);
-        lab.setExits(outside, office, null, null);
-        office.setExits(null, null, null, lab);
+        outside.setExits("west", pub);
+        theater.setExits("north", office);
+        pub.setExits("south", theater);
+        lab.setExits("north", outside);
+        lab.setExits("east", office);
+        office.setExits("west", lab);
 
         currentRoom = outside;  // start game outside
     }
@@ -81,13 +82,9 @@ public class Game
         System.out.println("World of Zuul is a new, incredibly boring adventure game.");
         System.out.println("Type 'help' if you need help.");
         System.out.println();
-        System.out.println("You are " + currentRoom.getDescription());
-        System.out.print("Exits: ");
-        System.out.print(currentRoom.getExitString());
-       
+        System.out.println(currentRoom.getLongDescription());
     }
-
-
+    
     /**
      * Given a command, process (that is: execute) the command.
      * @param command The command to be processed.
@@ -112,8 +109,26 @@ public class Game
         else if (commandWord.equals("quit")) {
             wantToQuit = quit(command);
         }
+        else if (commandWord.equals("look"))
+        {
+            look();
+        }
+        else if (commandWord.equals("eat"))
+        {
+            eat();
+        }
 
         return wantToQuit;
+    }
+        private void eat()
+        {
+            System.out.println("You have eaten, you are no longer hungry");
+        }
+    
+    // Prints line that gets your current location.
+        private void look()
+    {
+        System.out.println(currentRoom.getLongDescription());
     }
 
     // implementations of user commands:
@@ -129,7 +144,7 @@ public class Game
         System.out.println("around at the university.");
         System.out.println();
         System.out.println("Your command words are:");
-        System.out.println("   go quit help");
+        System.out.println(parser.showCommands());
     }
 
     /** 
@@ -156,7 +171,6 @@ public class Game
         else {
             currentRoom = nextRoom;
             System.out.println("You are " + currentRoom.getDescription());
-            System.out.print("Exits: ");
             System.out.print(currentRoom.getExitString());
         }
     }
